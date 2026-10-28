@@ -1,5 +1,3 @@
-const { NotImplementedError } = require('../lib');
-
 /**
  * Implement class VigenereCipheringMachine that allows us to create
  * direct and reverse ciphering machines according to task description
@@ -20,14 +18,29 @@ const { NotImplementedError } = require('../lib');
  *
  */
 class VigenereCipheringMachine {
-  encrypt() {
-    // Remove line below and write your code here
-    throw new NotImplementedError('Not implemented');
+  constructor(direct = true) {
+    this.direct = direct;
   }
 
-  decrypt() {
-    // Remove line below and write your code here
-    throw new NotImplementedError('Not implemented');
+  transform(message, key, direction) {
+    if (message === undefined || key === undefined) throw new Error('Incorrect arguments!');
+
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const upperKey = key.toUpperCase();
+    let keyIndex = 0;
+    const result = message.toUpperCase().replace(/[A-Z]/g, (letter) => {
+      const shift = letters.indexOf(upperKey[keyIndex++ % upperKey.length]);
+      return letters[(letters.indexOf(letter) + direction * shift + 26) % 26];
+    });
+    return this.direct ? result : result.split('').reverse().join('');
+  }
+
+  encrypt(message, key) {
+    return this.transform(message, key, 1);
+  }
+
+  decrypt(message, key) {
+    return this.transform(message, key, -1);
   }
 }
 
